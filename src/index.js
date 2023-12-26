@@ -61,7 +61,6 @@ class StatsComponentPlugin {
     })
     compiler.hooks.done.tap("StatsComponentPlugin", stats => {
       outputComUsage(this.stats, this.options)
-      server(this.stats, this.options)
     })
   }
 }

@@ -1,8 +1,5 @@
-const path = require("path")
-const http = require("http")
 const express = require('express')
 const render = require("../views/index")
-const open = require('open');
 let port = 8000
 
 const app = express()
@@ -13,7 +10,6 @@ const server = function(stats, options) {
   // const { name } = options
   app.get("/", (req, res) => {
     render({...stats, ...options}).then((html) => {
-      console.log("11", html)
       res.send(html)
     })
   })
@@ -37,5 +33,5 @@ const server = function(stats, options) {
   //   open(`http://localhost:${port}`)
   // })
 }
-
+server({}, {})
 module.exports = server
