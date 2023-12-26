@@ -1,6 +1,5 @@
 const fs = require("fs")
 const path = require("path")
-const chalk = require("chalk")
 const { parse } = require("@vue/compiler-sfc")
 const { objArrSort } = require("../utils/index")
 
@@ -50,8 +49,9 @@ const outputComUsage = (statsObj, options) => {
   statsObj.totalPages = Object.keys(statsObj.fileComponentUsage).length
   statsObj.coverageRate = ((fileUsageCount / statsObj.totalPages) * 100).toFixed(2) + "%"
   statsObj.componentUsage = objArrSort(statsObj.componentUsage)
+  console.log("--------------------------------------------")
   console.log(
-    `\n${chalk.blue(options.name)}页面使用覆盖率：${chalk.green(statsObj.coverageRate)}`
+    `\n${options.name}组件库页面使用覆盖率为：${statsObj.coverageRate}`
   )
   // 统计各个组件使用情况
   if (options.isStatsComUsage) {
@@ -60,9 +60,7 @@ const outputComUsage = (statsObj, options) => {
       const per =
         Number((value / Object.keys(statsObj.componentUsage).length).toPrecision(3)) * 100
       console.log(
-        `\n${chalk.blue(key)} 组件引用次数 ${chalk.green(value)} 引用率 ${chalk.redBright(
-          per
-        )}%`
+        `\n${key} 组件引用次数 ${value} 引用率 ${per}%`
       )
     })
   }

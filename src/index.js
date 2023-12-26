@@ -1,7 +1,7 @@
 const webpack = require("webpack")
 const NormalModule = webpack.NormalModule
 const { scanVuePages, outputComUsage } = require("./statistics/statsComponentUsage")
-const server = require('./server/index')
+// const server = require('./server/index')
 
 const initStatsMetric = function () {
   return {
