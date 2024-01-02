@@ -50,18 +50,12 @@ const outputComUsage = (statsObj, options) => {
   statsObj.coverageRate = ((fileUsageCount / statsObj.totalPages) * 100).toFixed(2) + "%"
   statsObj.componentUsage = objArrSort(statsObj.componentUsage)
   console.log("--------------------------------------------")
-  console.log(
-    `\n${options.name}组件库页面使用覆盖率为：${statsObj.coverageRate}`
-  )
+  console.log(`\n${options.name}页面使用覆盖率为：${statsObj.coverageRate}`)
   // 统计各个组件使用情况
   if (options.isStatsComUsage) {
     Object.keys(statsObj.componentUsage).forEach(key => {
       const value = statsObj.componentUsage[key]
-      const per =
-        Number((value / Object.keys(statsObj.componentUsage).length).toPrecision(3)) * 100
-      console.log(
-        `\n${key} 组件引用次数 ${value} 引用率 ${per}%`
-      )
+      console.log( `\n${key} 组件引用次数 ${value}`)
     })
   }
 }

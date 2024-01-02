@@ -21,7 +21,7 @@ class StatsComponentPlugin {
       parentPath: "/src/views", // 统计页面所在目录
       fileTypes: "vue", // 统计文件类型
       comNames: [], // 组件名统计白名单
-      isStatsComUsage: true
+      isStatsComUsage: false
     }
     this.options = Object.assign({}, defaultOptions, options)
     this.stats = initStatsMetric()

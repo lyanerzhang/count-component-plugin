@@ -23,6 +23,7 @@ module.exports = {
         }
       }
     ],
+    unknownContextCritical: false
   },
   resolve: {
     extensions: ['.js', '.ts','.tsx'],
