@@ -1,3 +1,5 @@
+const fs = require("fs")
+const path = require("path")
 const webpack = require("webpack")
 const NormalModule = webpack.NormalModule
 const { scanVuePages, outputComUsage } = require("./statistics/statsComponentUsage")
@@ -11,7 +13,28 @@ const initStatsMetric = function () {
     coverageRate: 0 // 页面覆盖率
   }
 }
+function getDirectoryTree(startPath) {
+  let result = { name: path.basename(startPath), children: [] };
+  let files = fs.readdirSync(startPath);
 
+  files.forEach(file => {
+    let filePath = path.join(startPath, file);
+    let stats = fs.statSync(filePath);
+
+    if (stats.isDirectory()) {
+        result.children.push(getDirectoryTree(filePath));
+    } else {
+        result.children.push({ name: file });
+    }
+  });
+  return result
+}
+function waitSrcTree(srcpath){
+  return new Promise((resolve) => {
+    const srcTree = getDirectoryTree(srcpath)
+    resolve(srcTree)
+  })
+}
 class StatsComponentPlugin {
   constructor(options) {
     const defaultOptions = {
@@ -25,18 +48,26 @@ class StatsComponentPlugin {
     }
     this.options = Object.assign({}, defaultOptions, options)
     this.stats = initStatsMetric()
+    this.id = 0
   }
   switchCaseFile(module) {
-    if (module.resource.indexOf("node_modules") !== -1) {
-      return false
-    }
-    if (/\.vue$/.test(module.resource)) {
-      scanVuePages(this.stats, this.options, module)
+    if (this.id === 0) {
+      const { fileTypes } = this.options
+      if (module.resource.indexOf("node_modules") !== -1) {
+        return false
+      }
+      switch (fileTypes) {
+        case "vue":
+          if (/\.vue$/.test(module.resource)) {
+            scanVuePages(this.stats, this.options, module)
+          }
+          break;
+      }
     }
   }
 
   apply(compiler) {
-    compiler.hooks.compilation.tap("satst-component-plugin", compilation => {
+    compiler.hooks.compilation.tap("StatsComponentPlugin", compilation => {
       if (
         NormalModule &&
         NormalModule.getCompilationHooks &&
@@ -60,7 +91,10 @@ class StatsComponentPlugin {
       }
     })
     compiler.hooks.done.tap("StatsComponentPlugin", stats => {
-      outputComUsage(this.stats, this.options)
+      this.id === 0 && waitSrcTree(path.join(compiler.context, 'src')).then(srcTree => {
+        this.id++
+        outputComUsage(this.stats, this.options)
+      })
     })
   }
 }

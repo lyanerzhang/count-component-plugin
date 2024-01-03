@@ -24,12 +24,13 @@ const statisticVueFileComponentUsage = (statsObj, options, relativePath, module)
   const { descriptor } = parse(source)
   let templateContent = descriptor && descriptor.template && descriptor.template.content
   let scriptContent = descriptor && descriptor.script && descriptor.script.content
+  let scriptSetup = descriptor && descriptor.scriptSetup && descriptor.scriptSetup.content
   let temMatch, funMatch
   while ((temMatch = options.temRegex.exec(templateContent)) !== null) {
     const componentName = temMatch[1]
     statsComCount(statsObj, componentName, relativePath)
   }
-  while ((funMatch = options.funRegex.exec(scriptContent)) !== null) {
+  while ((funMatch = options.funRegex.exec(scriptContent || scriptSetup)) !== null) {
     const componentName = funMatch[1]
     statsComCount(statsObj, componentName, relativePath)
   }
@@ -55,7 +56,13 @@ const outputComUsage = (statsObj, options) => {
   if (options.isStatsComUsage) {
     Object.keys(statsObj.componentUsage).forEach(key => {
       const value = statsObj.componentUsage[key]
-      console.log( `\n${key} 组件引用次数 ${value}`)
+      if (options.comNames.length) {
+        if (options.comNames.includes(key)) {
+          console.log( `\n${key} 组件引用次数 ${value}`)
+        }
+      } else {
+        console.log( `\n${key} 组件引用次数 ${value}`)
+      }
     })
   }
 }
