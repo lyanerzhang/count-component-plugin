@@ -54,16 +54,28 @@ const outputComUsage = (statsObj, options) => {
   console.log(`\n${options.name}页面使用覆盖率为：${statsObj.coverageRate}`)
   // 统计各个组件使用情况
   if (options.isStatsComUsage) {
+    let usedComList = []
+    let unUsedComList = []
     Object.keys(statsObj.componentUsage).forEach(key => {
       const value = statsObj.componentUsage[key]
       if (options.comNames.length) {
         if (options.comNames.includes(key)) {
+          usedComList.push(key)
           console.log( `\n${key} 组件引用次数 ${value}`)
         }
       } else {
         console.log( `\n${key} 组件引用次数 ${value}`)
       }
     })
+    if (options.comNames.length) {
+      options.comNames.map((comName) => {
+        if (!usedComList.includes(comName)) {
+          unUsedComList.push(comName)
+        }
+      })
+      console.log("--------------------------------------------")
+      console.log(`\n未被使用的组件：\n${unUsedComList.join('\n')}`)
+    }
   }
 }
 exports.scanVuePages = scanVuePages
