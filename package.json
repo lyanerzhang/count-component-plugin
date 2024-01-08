@@ -1,6 +1,6 @@
 {
   "name": "stats-component-plugin",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "statistics project",
   "main": "dist/index.js",
   "scripts": {
