@@ -37,6 +37,8 @@ const statisticVueFileComponentUsage = (statsObj, options, relativePath, module)
 }
 const outputComUsage = (statsObj, options) => {
   let fileUsageCount = 0
+  let usedComList = []
+  let unUsedComList = []
   for (let key in statsObj.fileComponentUsage) {
     for (let comKey in statsObj.fileComponentUsage[key]) {
       if (options.comNames.length && !options.comNames.includes(comKey)) {
@@ -50,18 +52,14 @@ const outputComUsage = (statsObj, options) => {
   statsObj.totalPages = Object.keys(statsObj.fileComponentUsage).length
   statsObj.coverageRate = ((fileUsageCount / statsObj.totalPages) * 100).toFixed(2) + "%"
   statsObj.componentUsage = objArrSort(statsObj.componentUsage)
-  console.log("--------------------------------------------")
-  console.log(`\n${options.name}页面使用覆盖率为：${statsObj.coverageRate}`)
   // 统计各个组件使用情况
   if (options.isStatsComUsage) {
-    let usedComList = []
-    let unUsedComList = []
     Object.keys(statsObj.componentUsage).forEach(key => {
       const value = statsObj.componentUsage[key]
       if (options.comNames.length) {
         if (options.comNames.includes(key)) {
           usedComList.push(key)
-          console.log( `\n${key} 组件引用次数 ${value}`)
+          console.log( `${key} 组件引用次数 ${value}`)
         }
       } else {
         console.log( `\n${key} 组件引用次数 ${value}`)
@@ -73,10 +71,16 @@ const outputComUsage = (statsObj, options) => {
           unUsedComList.push(comName)
         }
       })
-      console.log("--------------------------------------------")
-      console.log(`\n未被使用的组件：\n${unUsedComList.join('\n')}`)
     }
   }
+  console.log("--------------------------------------------")
+  console.log(`
+    \n页面总数量为${statsObj.totalPages} 个
+    \n被使用到的组件有${usedComList.length} 个
+    \n未被使用到的组件有${unUsedComList.length} 个
+  `)
+  console.log(`\n${options.name}页面使用覆盖率为：${statsObj.coverageRate}`)
+  console.log(`\n未被使用的组件：\n${unUsedComList.join('\n')}`)
 }
 exports.scanVuePages = scanVuePages
 exports.outputComUsage = outputComUsage
