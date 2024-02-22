@@ -2,6 +2,7 @@ const fs = require("fs")
 const path = require("path")
 const webpack = require("webpack")
 const NormalModule = webpack.NormalModule
+const Compilation = webpack.Compilation
 const { scanVuePages, outputComUsage } = require("./statistics/statsComponentUsage")
 // const server = require('./server/index')
 
@@ -56,13 +57,19 @@ class StatsComponentPlugin {
       if (module.resource.indexOf("node_modules") !== -1) {
         return false
       }
-      switch (fileTypes) {
-        case "vue":
-          if (/\.vue$/.test(module.resource)) {
-            scanVuePages(this.stats, this.options, module)
-          }
-          break;
+      if (module.resource && module.resource.indexOf("router/index.js") !== -1) {
+        // console.log(module)
+        // module.parser.hooks.export.tap("StatsComponentPlugin", (statement) => {
+        //   console.log("statement-----", statement)
+        // })
       }
+      // switch (fileTypes) {
+      //   case "vue":
+      //     if (/\.vue$/.test(module.resource)) {
+      //       scanVuePages(this.stats, this.options, module)
+      //     }
+      //     break;
+      // }
     }
   }
 
@@ -77,7 +84,8 @@ class StatsComponentPlugin {
         NormalModule.getCompilationHooks(compilation).loader.tap(
           "StatsComponentPlugin",
           (loaderContext, module) => {
-            this.switchCaseFile(module)
+            console.log(module.resource)
+            // this.switchCaseFile(module)
           }
         )
       } else {
@@ -85,15 +93,22 @@ class StatsComponentPlugin {
         compilation.hooks.normalModuleLoader.tap(
           "StatsComponentPlugin",
           (loaderContext, module) => {
-            this.switchCaseFile(module)
+            // console.log(compilation)
+            // this.switchCaseFile(module)
           }
         )
+        console.log(111, compilation.getAssets())
+        // compilation.getDependencyReference = (module, dependency) => {
+        //   console.log(22)
+        //   console.log(compilation)
+        // }
       }
     })
     compiler.hooks.done.tap("StatsComponentPlugin", stats => {
+      console.log(stats)
       this.id === 0 && waitSrcTree(path.join(compiler.context, 'src')).then(srcTree => {
         this.id++
-        outputComUsage(this.stats, this.options)
+        // outputComUsage(this.stats, this.options)
       })
     })
   }
